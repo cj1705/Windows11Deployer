@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "eb5f43e8-b82a-4545-8115-febcef659e0c": {
+      "ProjectGuid": "eb5f43e8-b82a-4545-8115-febcef659e0c",
+      "DisplayName": "WIndowsImageDeployerPE",
+      "ColorIndex": 0
+    }
+  },
+  "NextColorIndex": 1
+}

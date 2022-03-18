@@ -1,0 +1,6 @@
+L:\VS stuff\Projects\WIndowsImageDeployerPE\WIndowsImageDeployerPE\bin\Debug\WIndowsImageDeployerPE.exe
+L:\VS stuff\Projects\WIndowsImageDeployerPE\WIndowsImageDeployerPE\bin\Debug\WIndowsImageDeployerPE.pdb
+L:\VS stuff\Projects\WIndowsImageDeployerPE\WIndowsImageDeployerPE\obj\Debug\WIndowsImageDeployerPE.csproj.AssemblyReference.cache
+L:\VS stuff\Projects\WIndowsImageDeployerPE\WIndowsImageDeployerPE\obj\Debug\WIndowsImageDeployerPE.csproj.CoreCompileInputs.cache
+L:\VS stuff\Projects\WIndowsImageDeployerPE\WIndowsImageDeployerPE\obj\Debug\WIndowsImageDeployerPE.exe
+L:\VS stuff\Projects\WIndowsImageDeployerPE\WIndowsImageDeployerPE\obj\Debug\WIndowsImageDeployerPE.pdb
