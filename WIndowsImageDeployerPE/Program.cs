@@ -18,15 +18,62 @@ namespace WIndowsImageDeployerPE
             
             WIndowsImageDeployerPE.Program program = new WIndowsImageDeployerPE.Program();
             List<string> drive_array = new List<string>();
-            int driveindex;
+            int driveindex = 0;
             int drivesel;
             string drivename = " ";
+            List<int> disbaledoptions = new List<int>();
             while (true)
             {
+                Console.ForegroundColor = ConsoleColor.White;
                 Console.Clear();
                 Console.WriteLine("--------Windows 11 Deployer--------");
                 Console.WriteLine("Created by Carson Games");
                 Console.WriteLine("-----------------------------------");
+
+
+                Console.WriteLine("Select a option below.");
+
+                Console.WriteLine("(1) Install using the currently loaded image.");
+
+                //Console.WriteLine("(2) Download & Update the current image.");
+
+                //if (!program.IsConnectedToInternet())
+                //{
+
+
+                //}
+                //Console.SetCursorPosition(0, Console.CursorTop - 1);
+                //Console.ForegroundColor = ConsoleColor.DarkGray;
+                //Console.WriteLine("(2) Download & Update the current image. -  No internet ");
+                //disbaledoptions.Add(2);
+
+                //Console.ForegroundColor = ConsoleColor.White;
+
+                Console.WriteLine("(2) Exit.");
+
+                string choice = Console.ReadLine();
+                if (disbaledoptions.Contains(Int32.Parse(choice)))
+                {
+                    Console.WriteLine("This option is disbaled.");
+
+
+                }
+                else
+                {
+                    if(choice == "1")
+                    {
+                        break;
+                    }
+                    if (choice == "2")
+                    {
+                        Console.WriteLine("Now exiting. Run exit to reboot.");
+                        Environment.Exit(0);
+
+                    }
+                }
+                
+               
+            }
 
                 Console.WriteLine("Getting Disks.");
 
@@ -97,25 +144,25 @@ namespace WIndowsImageDeployerPE
                 if (rows[i].Contains("Disk"))
                 {
                     int index = Int32.Parse(rows[i].Split(new string[] { " " }, StringSplitOptions.None)[3]);
-                    string label = rows[i].Split(new string[] { " " }, StringSplitOptions.None)[16] + " "+rows[i].Split(new string[] { " " }, StringSplitOptions.None)[17];
+                    string label = rows[i].Split(new string[] { " " }, StringSplitOptions.None)[16] + " " + rows[i].Split(new string[] { " " }, StringSplitOptions.None)[17];
                     long size = 0;
 
 
                     foreach (DriveInfo drive in DriveInfo.GetDrives())
                     {
-                        
-                        if(drive.IsReady && drive.VolumeLabel == label  )
+
+                        if (drive.IsReady && drive.VolumeLabel == label)
                         {
                             size = (long)(drive.TotalSize / 1000 / 1024);
                         }
                     }
                     Console.WriteLine($@"Disk {index} {label}");
                 }
-            }
-           
-           
+
+
+
                 Console.WriteLine("Select a disk number");
-               drivesel = program.GetIndexOfDrive(Console.ReadLine());
+                drivesel = program.GetIndexOfDrive(Console.ReadLine());
                 if (drivesel == -1)
                 {
                     Console.WriteLine("Invalid Selection.");
@@ -129,47 +176,48 @@ namespace WIndowsImageDeployerPE
                     string answer = Console.ReadLine();
                     if (answer == "Y" || answer == "y")
                     {
-                        
-                        break;
+
+
                     }
                     else
                     {
                         Console.WriteLine("Starting over");
                     }
-                  
-
-                }
 
 
-              
 
-            }
 
-            Console.WriteLine(" (1/3) Formatting Drive");
-            if (program.Format(drivesel))
-            {
-             
-                Console.WriteLine("(2/3) Deploying Image - This may take awhile");
-                if (program.Install(drivesel))
-                {
-                    
-                    Console.WriteLine("(3/3) Adding BCD Records");
-                    if (program.BCDRecords(drivesel))
+
+
+
+
+
+                    Console.WriteLine(" (1/3) Formatting Drive");
+                    if (program.Format(drivesel))
                     {
-                        Console.WriteLine("Windows 11 has been deployed! ");
-                        Console.WriteLine("Run"+ " 'exit' "+" to reboot. ");
-                       
+
+                        Console.WriteLine("(2/3) Deploying Image - This may take awhile");
+                        if (program.Install(drivesel))
+                        {
+
+                            Console.WriteLine("(3/3) Adding BCD Records");
+                            if (program.BCDRecords(drivesel))
+                            {
+                                Console.WriteLine("Windows 11 has been deployed! ");
+                                Console.WriteLine("Run" + " 'exit' " + " to reboot. ");
+                                
+                                Environment.Exit(0);
+
+                            }
+
+                        }
 
                     }
-
                 }
 
-                Console.ReadLine();
+
+
             }
-
-
-
-
 
 
         }
@@ -194,6 +242,16 @@ namespace WIndowsImageDeployerPE
             return true;
 
         }
+        //public bool UpdateFile()
+        //{
+
+        //    WebClient webClient = new WebClient();
+        //    webClient.DownloadProgressChanged += wc_DownloadProgressChanged;
+
+        //    webClient.DownloadFileAsync(new Uri()
+
+            
+        //}
 
 
 
