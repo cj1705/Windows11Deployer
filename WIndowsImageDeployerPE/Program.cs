@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -6,13 +7,14 @@ using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Text;
-
+using System.Threading;
+using System.Windows.Forms;
 namespace WIndowsImageDeployerPE
 {
     internal class Program
     {
        
-
+        [STAThread]
       public  static void Main(string[] args)
         {
             
@@ -31,6 +33,13 @@ namespace WIndowsImageDeployerPE
                 Console.WriteLine("-----------------------------------");
 
 
+                if (!program.isWinPE())
+                {
+                    Console.WriteLine("You are not currently booted into WindowsPE. This setup will not work on normal windows\nas the required files are not in normal windows. Please use this setup within WindowsPE.");
+                    Console.WriteLine("Press any key to exit.");
+                    Console.ReadKey();
+                    Environment.Exit(0);
+                }
                 Console.WriteLine("Select a option below.");
 
                 Console.WriteLine("(1) Install using the currently loaded image.");
@@ -141,23 +150,23 @@ namespace WIndowsImageDeployerPE
             var rows = table.Split(new string[] { "\n" }, StringSplitOptions.None);
             for (int i = 3; i < rows.Length; i++)
             {
-                if (rows[i].Contains("Disk"))
-                {
+               // if (rows[i].Contains("Disk"))
+              //  {
                     int index = Int32.Parse(rows[i].Split(new string[] { " " }, StringSplitOptions.None)[3]);
                     string label = rows[i].Split(new string[] { " " }, StringSplitOptions.None)[16] + " " + rows[i].Split(new string[] { " " }, StringSplitOptions.None)[17];
-                    long size = 0;
+                   // long size = 0;
 
 
-                    foreach (DriveInfo drive in DriveInfo.GetDrives())
-                    {
+                    //foreach (DriveInfo drive in DriveInfo.GetDrives())
+                    //{
 
-                        if (drive.IsReady && drive.VolumeLabel == label)
-                        {
-                            size = (long)(drive.TotalSize / 1000 / 1024);
-                        }
-                    }
-                    Console.WriteLine($@"Disk {index} {label}");
-                }
+                    //    if (drive.IsReady && drive.VolumeLabel == label)
+                    //    {
+                    //        size = (long)(drive.TotalSize / 1000 / 1024);
+                    //    }
+                    //}
+                    Console.WriteLine(output);
+            //    }
 
 
 
@@ -196,15 +205,16 @@ namespace WIndowsImageDeployerPE
                     if (program.Format(drivesel))
                     {
 
-                        Console.WriteLine("(2/3) Deploying Image - This may take awhile");
+                        Console.WriteLine(" (2/3) Deploying Image - This may take awhile");
+                        
                         if (program.Install(drivesel))
                         {
 
-                            Console.WriteLine("(3/3) Adding BCD Records");
+                            Console.WriteLine(" (3/3) Adding BCD Records");
                             if (program.BCDRecords(drivesel))
                             {
                                 Console.WriteLine("Windows 11 has been deployed! ");
-                                Console.WriteLine("Run" + " 'exit' " + " to reboot. ");
+                                Console.WriteLine("Run 'exit' to reboot. ");
                                 
                                 Environment.Exit(0);
 
@@ -222,7 +232,21 @@ namespace WIndowsImageDeployerPE
 
         }
 
-       
+       public bool isWinPE()
+        {
+            using (var hklm = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64))
+            using (var key = hklm.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion\WinPE"))
+            {
+                if (key == null)
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+        }
         public void wc_DownloadProgressChanged(Object sender, DownloadProgressChangedEventArgs e)
 
         {
@@ -302,19 +326,25 @@ namespace WIndowsImageDeployerPE
         }
         public bool Install(int index)
         {
+
             Process process = new Process();
+            process.StartInfo.FileName = "dism.exe";
+            process.StartInfo.Arguments = "/apply-image /imagefile:install.wim /index:1 /ApplyDir:W:\\";
             process.StartInfo.UseShellExecute = false;
             process.StartInfo.CreateNoWindow = true;
             process.StartInfo.RedirectStandardInput = true;
             process.StartInfo.RedirectStandardOutput = true;
-            process.StartInfo.FileName = "dism.exe";
-            process.StartInfo.Arguments = "/apply-image /imagefile:install.wim /index:1 /ApplyDir:W:\\";
             process.Start();
+          
+
+
             string output = process.StandardOutput.ReadToEnd();
             process.WaitForExit();
-
-
             return true;
+        }
+        void process_OutputDataReceived(object sender, DataReceivedEventArgs e)
+        {
+            Console.WriteLine(e.Data.ToString()) ;
         }
         public bool BCDRecords(int index)
         {

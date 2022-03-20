@@ -5,3 +5,5 @@ L:\VS stuff\Projects\WIndowsImageDeployerPE\WIndowsImageDeployerPE\obj\Debug\WIn
 L:\VS stuff\Projects\WIndowsImageDeployerPE\WIndowsImageDeployerPE\obj\Debug\WIndowsImageDeployerPE.exe
 L:\VS stuff\Projects\WIndowsImageDeployerPE\WIndowsImageDeployerPE\obj\Debug\WIndowsImageDeployerPE.pdb
 L:\VS stuff\Projects\WIndowsImageDeployerPE\WIndowsImageDeployerPE\bin\Debug\WIndowsImageDeployerPE.exe.config
+L:\VS stuff\Projects\WIndowsImageDeployerPE\WIndowsImageDeployerPE\obj\Debug\WIndowsImageDeployerPE.Form1.resources
+L:\VS stuff\Projects\WIndowsImageDeployerPE\WIndowsImageDeployerPE\obj\Debug\WIndowsImageDeployerPE.csproj.GenerateResource.cache
