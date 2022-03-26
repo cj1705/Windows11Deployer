@@ -13,9 +13,9 @@ namespace WIndowsImageDeployerPE
 {
     internal class Program
     {
-       
+        Microsoft.VisualBasic.Devices.ComputerInfo ComputerInfo = new Microsoft.VisualBasic.Devices.ComputerInfo();
         [STAThread]
-      public  static void Main(string[] args)
+        public static void Main(string[] args)
         {
             
             WIndowsImageDeployerPE.Program program = new WIndowsImageDeployerPE.Program();
@@ -29,7 +29,10 @@ namespace WIndowsImageDeployerPE
                 Console.ForegroundColor = ConsoleColor.White;
                 Console.Clear();
                 Console.WriteLine("--------Windows 11 Deployer--------");
-                Console.WriteLine("Created by Carson Games");
+                Console.WriteLine("Created by Carson Games \n");
+
+                program.DisplaySystemInfo();
+
                 Console.WriteLine("-----------------------------------");
 
 
@@ -63,13 +66,13 @@ namespace WIndowsImageDeployerPE
                 string choice = Console.ReadLine();
                 if (disbaledoptions.Contains(Int32.Parse(choice)))
                 {
-                    Console.WriteLine("This option is disbaled.");
+                    Console.WriteLine("This option is diabled.");
 
 
                 }
                 else
                 {
-                    if(choice == "1")
+                    if (choice == "1")
                     {
                         break;
                     }
@@ -80,11 +83,11 @@ namespace WIndowsImageDeployerPE
 
                     }
                 }
-                
-               
+
+
             }
 
-                Console.WriteLine("Getting Disks.");
+            Console.WriteLine("Getting Disks.");
 
 
             //    DriveInfo[] drives = DriveInfo.GetDrives();
@@ -125,7 +128,7 @@ namespace WIndowsImageDeployerPE
             //            Console.WriteLine("Invalid Selection. Try again.");
             //        }
             //    }
-            
+
             //    drivename = drive_array[driveindex].Split('-')[0];
             //    Console.WriteLine(drivename);
             //    Console.ReadLine();
@@ -141,7 +144,7 @@ namespace WIndowsImageDeployerPE
             process.StandardInput.WriteLine("list disk");
             process.StandardInput.WriteLine("exit");
 
-                string output = process.StandardOutput.ReadToEnd();
+            string output = process.StandardOutput.ReadToEnd();
             process.WaitForExit();
 
 
@@ -150,23 +153,23 @@ namespace WIndowsImageDeployerPE
             var rows = table.Split(new string[] { "\n" }, StringSplitOptions.None);
             for (int i = 3; i < rows.Length; i++)
             {
-               // if (rows[i].Contains("Disk"))
-              //  {
-                    int index = Int32.Parse(rows[i].Split(new string[] { " " }, StringSplitOptions.None)[3]);
-                    string label = rows[i].Split(new string[] { " " }, StringSplitOptions.None)[16] + " " + rows[i].Split(new string[] { " " }, StringSplitOptions.None)[17];
-                   // long size = 0;
+                // if (rows[i].Contains("Disk"))
+                //  {
+                int index = Int32.Parse(rows[i].Split(new string[] { " " }, StringSplitOptions.None)[3]);
+                string label = rows[i].Split(new string[] { " " }, StringSplitOptions.None)[16] + " " + rows[i].Split(new string[] { " " }, StringSplitOptions.None)[17];
+                // long size = 0;
 
 
-                    //foreach (DriveInfo drive in DriveInfo.GetDrives())
-                    //{
+                //foreach (DriveInfo drive in DriveInfo.GetDrives())
+                //{
 
-                    //    if (drive.IsReady && drive.VolumeLabel == label)
-                    //    {
-                    //        size = (long)(drive.TotalSize / 1000 / 1024);
-                    //    }
-                    //}
-                    Console.WriteLine(output);
-            //    }
+                //    if (drive.IsReady && drive.VolumeLabel == label)
+                //    {
+                //        size = (long)(drive.TotalSize / 1000 / 1024);
+                //    }
+                //}
+                Console.WriteLine(output);
+                //    }
 
 
 
@@ -206,7 +209,7 @@ namespace WIndowsImageDeployerPE
                     {
 
                         Console.WriteLine(" (2/3) Deploying Image - This may take awhile");
-                        
+
                         if (program.Install(drivesel))
                         {
 
@@ -215,7 +218,7 @@ namespace WIndowsImageDeployerPE
                             {
                                 Console.WriteLine("Windows 11 has been deployed! ");
                                 Console.WriteLine("Run 'exit' to reboot. ");
-                                
+
                                 Environment.Exit(0);
 
                             }
@@ -232,7 +235,7 @@ namespace WIndowsImageDeployerPE
 
         }
 
-       public bool isWinPE()
+        public bool isWinPE()
         {
             using (var hklm = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64))
             using (var key = hklm.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion\WinPE"))
@@ -250,9 +253,9 @@ namespace WIndowsImageDeployerPE
         public void wc_DownloadProgressChanged(Object sender, DownloadProgressChangedEventArgs e)
 
         {
-            Console.WriteLine("Downloading Image. - "+ e.ProgressPercentage + "% complete." );
+            Console.WriteLine("Downloading Image. - " + e.ProgressPercentage + "% complete.");
             Console.SetCursorPosition(0, Console.CursorTop - 1);
-           
+
 
 
         }
@@ -274,14 +277,14 @@ namespace WIndowsImageDeployerPE
 
         //    webClient.DownloadFileAsync(new Uri()
 
-            
+
         //}
 
 
 
         public bool IsConnectedToInternet()
         {
-            string host = "carsongames.com";  
+            string host = "carsongames.com";
             Ping p = new Ping();
             try
             {
@@ -292,7 +295,17 @@ namespace WIndowsImageDeployerPE
             catch { }
             return false;
         }
-       
+        public bool isUEFI()
+        {
+            if (Environment.GetEnvironmentVariable("firmware_type") == "UEFI" || Environment.GetEnvironmentVariable("firmware_type") == "EFI")
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
         public bool Format(int index)
         {
             Process process = new Process();
@@ -307,7 +320,10 @@ namespace WIndowsImageDeployerPE
             process.StandardInput.WriteLine("create partition primary size=100");
             process.StandardInput.WriteLine("format quick fs=ntfs label=System");
             process.StandardInput.WriteLine("assign letter=S");
-            process.StandardInput.WriteLine("active");
+            if (!isUEFI())
+            {
+                process.StandardInput.WriteLine("active");
+            }
             process.StandardInput.WriteLine("create partition primary");
             process.StandardInput.WriteLine("shrink minimum=650");
             process.StandardInput.WriteLine("format quick fs=ntfs label=Windows");
@@ -316,7 +332,7 @@ namespace WIndowsImageDeployerPE
             process.StandardInput.WriteLine("format quick fs=ntfs label=Recovery");
             process.StandardInput.WriteLine("assign letter=R");
             process.StandardInput.WriteLine("set id=27");
-      
+
             process.StandardInput.WriteLine("exit");
 
 
@@ -335,7 +351,7 @@ namespace WIndowsImageDeployerPE
             process.StartInfo.RedirectStandardInput = true;
             process.StartInfo.RedirectStandardOutput = true;
             process.Start();
-          
+
 
 
             string output = process.StandardOutput.ReadToEnd();
@@ -344,7 +360,7 @@ namespace WIndowsImageDeployerPE
         }
         void process_OutputDataReceived(object sender, DataReceivedEventArgs e)
         {
-            Console.WriteLine(e.Data.ToString()) ;
+            Console.WriteLine(e.Data.ToString());
         }
         public bool BCDRecords(int index)
         {
@@ -398,6 +414,17 @@ namespace WIndowsImageDeployerPE
             }
 
             return -1;
+        }
+        public void DisplaySystemInfo()
+        {
+            Console.WriteLine("System Information: ");
+
+            Console.WriteLine("System Memory: " + ComputerInfo.TotalPhysicalMemory / 1000 / 1024 + " MB");
+            var key = Registry.LocalMachine.OpenSubKey(@"HARDWARE\DESCRIPTION\System\CentralProcessor\0\");
+
+            Console.WriteLine("CPU: " + key?.GetValue("ProcessorNameString").ToString() ?? "Not Found");
+
+            Console.WriteLine("Firmware Type : " + Environment.GetEnvironmentVariable("firmware_type"));
         }
     }
 }
