@@ -5,3 +5,12 @@ L:\VS stuff\Projects\WIndowsImageDeployerPE\WIndowsImageDeployerPE\obj\Debug\WIn
 L:\VS stuff\Projects\WIndowsImageDeployerPE\WIndowsImageDeployerPE\obj\Debug\WIndowsImageDeployerPE.exe
 L:\VS stuff\Projects\WIndowsImageDeployerPE\WIndowsImageDeployerPE\obj\Debug\WIndowsImageDeployerPE.pdb
 L:\VS stuff\Projects\WIndowsImageDeployerPE\WIndowsImageDeployerPE\bin\Debug\WIndowsImageDeployerPE.exe.config
+H:\VS stuff\Projects\WIndowsImageDeployerPE\WIndowsImageDeployerPE\bin\Debug\WIndowsImageDeployerPE.exe.config
+H:\VS stuff\Projects\WIndowsImageDeployerPE\WIndowsImageDeployerPE\bin\Debug\WIndowsImageDeployerPE.exe
+H:\VS stuff\Projects\WIndowsImageDeployerPE\WIndowsImageDeployerPE\bin\Debug\WIndowsImageDeployerPE.pdb
+H:\VS stuff\Projects\WIndowsImageDeployerPE\WIndowsImageDeployerPE\obj\Debug\WIndowsImageDeployerPE.csproj.AssemblyReference.cache
+H:\VS stuff\Projects\WIndowsImageDeployerPE\WIndowsImageDeployerPE\obj\Debug\WIndowsImageDeployerPE.progress.resources
+H:\VS stuff\Projects\WIndowsImageDeployerPE\WIndowsImageDeployerPE\obj\Debug\WIndowsImageDeployerPE.csproj.GenerateResource.cache
+H:\VS stuff\Projects\WIndowsImageDeployerPE\WIndowsImageDeployerPE\obj\Debug\WIndowsImageDeployerPE.csproj.CoreCompileInputs.cache
+H:\VS stuff\Projects\WIndowsImageDeployerPE\WIndowsImageDeployerPE\obj\Debug\WIndowsImageDeployerPE.exe
+H:\VS stuff\Projects\WIndowsImageDeployerPE\WIndowsImageDeployerPE\obj\Debug\WIndowsImageDeployerPE.pdb

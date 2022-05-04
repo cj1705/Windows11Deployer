@@ -13,19 +13,22 @@ namespace WIndowsImageDeployerPE
 {
     internal class Program
     {
+        int left = Console.CursorLeft;
+        int top = Console.CursorTop; 
         Microsoft.VisualBasic.Devices.ComputerInfo ComputerInfo = new Microsoft.VisualBasic.Devices.ComputerInfo();
         [STAThread]
+     
         public static void Main(string[] args)
         {
-            
+
+           
             WIndowsImageDeployerPE.Program program = new WIndowsImageDeployerPE.Program();
             List<string> drive_array = new List<string>();
             int driveindex = 0;
             int drivesel;
             string drivename = " ";
             List<int> disbaledoptions = new List<int>();
-            while (true)
-            {
+          
                 Console.ForegroundColor = ConsoleColor.White;
                 Console.Clear();
                 Console.WriteLine("--------Windows 11 Deployer--------");
@@ -39,199 +42,208 @@ namespace WIndowsImageDeployerPE
                 if (!program.isWinPE())
                 {
                     Console.WriteLine("You are not currently booted into WindowsPE. This setup will not work on normal windows\nas the required files are not in normal windows. Please use this setup within WindowsPE.");
-                    Console.WriteLine("Press any key to exit.");
-                    Console.ReadKey();
-                    Environment.Exit(0);
-                }
-                Console.WriteLine("Select a option below.");
+                    Console.WriteLine("Press Y to download a copy of the bootable ISO or press any other key to exit.");
 
-                Console.WriteLine("(1) Install using the currently loaded image.");
-
-                //Console.WriteLine("(2) Download & Update the current image.");
-
-                //if (!program.IsConnectedToInternet())
-                //{
-
-
-                //}
-                //Console.SetCursorPosition(0, Console.CursorTop - 1);
-                //Console.ForegroundColor = ConsoleColor.DarkGray;
-                //Console.WriteLine("(2) Download & Update the current image. -  No internet ");
-                //disbaledoptions.Add(2);
-
-                //Console.ForegroundColor = ConsoleColor.White;
-
-                Console.WriteLine("(2) Exit.");
-
-                string choice = Console.ReadLine();
-                if (disbaledoptions.Contains(Int32.Parse(choice)))
+                    ConsoleKey consoleKey = Console.ReadKey().Key;
+                if (consoleKey == ConsoleKey.Y)
                 {
-                    Console.WriteLine("This option is diabled.");
-
+                    program.Download_Save();
+                }
 
                 }
                 else
                 {
-                    if (choice == "1")
-                    {
-                        break;
-                    }
-                    if (choice == "2")
-                    {
-                        Console.WriteLine("Now exiting. Run exit to reboot.");
-                        Environment.Exit(0);
-
-                    }
-                }
-
-
-            }
-
-            Console.WriteLine("Getting Disks.");
-
-
-            //    DriveInfo[] drives = DriveInfo.GetDrives();
-            //    foreach (DriveInfo drive in drives)
-            //    {
-            //        if (drive.IsReady)
-            //        {
-            //            string label = drive.VolumeLabel;
-            //            if (label == "" || label == " ")
-            //            {
-            //                label = "(no label)";
-            //            }
-            //            drive_array.Add(label + " - " + drive.TotalSize / 1000 / 1024 + "MB");
-            //        }
-            //    }
-            //    foreach (string drive in drive_array)
-            //    {
-            //        Console.WriteLine("[" + drive_array.IndexOf(drive) + "] " + drive);
-
-            //    }
-            //    while (true)
-            //    {
-            //        try
-            //        {
-            //            Console.WriteLine("Pick a drive you would like to use.");
-            //            int temp = Int32.Parse(Console.ReadLine());
-
-            //            driveindex = temp;
-            //            temp = 0;
-            //            Console.WriteLine(drive_array[driveindex]);
-            //            break;
-
-
-
-            //        }
-            //        catch (Exception e)
-            //        {
-            //            Console.WriteLine("Invalid Selection. Try again.");
-            //        }
-            //    }
-
-            //    drivename = drive_array[driveindex].Split('-')[0];
-            //    Console.WriteLine(drivename);
-            //    Console.ReadLine();
-            //}
-            // execute DiskPart programatically
-            Process process = new Process();
-            process.StartInfo.FileName = "diskpart.exe";
-            process.StartInfo.UseShellExecute = false;
-            process.StartInfo.CreateNoWindow = true;
-            process.StartInfo.RedirectStandardInput = true;
-            process.StartInfo.RedirectStandardOutput = true;
-            process.Start();
-            process.StandardInput.WriteLine("list disk");
-            process.StandardInput.WriteLine("exit");
-
-            string output = process.StandardOutput.ReadToEnd();
-            process.WaitForExit();
-
-
-            // extract information from output
-            string table = output.Split(new string[] { "DISKPART>" }, StringSplitOptions.None)[1];
-            var rows = table.Split(new string[] { "\n" }, StringSplitOptions.None);
-            for (int i = 3; i < rows.Length; i++)
-            {
-                // if (rows[i].Contains("Disk"))
-                //  {
-                int index = Int32.Parse(rows[i].Split(new string[] { " " }, StringSplitOptions.None)[3]);
-                string label = rows[i].Split(new string[] { " " }, StringSplitOptions.None)[16] + " " + rows[i].Split(new string[] { " " }, StringSplitOptions.None)[17];
-                // long size = 0;
-
-
-                //foreach (DriveInfo drive in DriveInfo.GetDrives())
-                //{
-
-                //    if (drive.IsReady && drive.VolumeLabel == label)
-                //    {
-                //        size = (long)(drive.TotalSize / 1000 / 1024);
-                //    }
-                //}
-                Console.WriteLine(output);
-                //    }
-
-
-
-                Console.WriteLine("Select a disk number");
-                drivesel = program.GetIndexOfDrive(Console.ReadLine());
-                if (drivesel == -1)
+                while (true)
                 {
-                    Console.WriteLine("Invalid Selection.");
-                }
-                else
-                {
-                    Console.WriteLine("Are you sure you want to continue with " + drivesel + "?");
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("ALL DATA ON THAT DRIVE WILL BE FORMATTED!!!");
-                    Console.ForegroundColor = ConsoleColor.White;
-                    string answer = Console.ReadLine();
-                    if (answer == "Y" || answer == "y")
+                    Console.WriteLine("Select a option below.");
+
+                    Console.WriteLine("(1) Install using the currently loaded image.");
+
+                    //Console.WriteLine("(2) Download & Update the current image.");
+
+                    //if (!program.IsConnectedToInternet())
+                    //{
+
+
+                    //}
+                    //Console.SetCursorPosition(0, Console.CursorTop - 1);
+                    //Console.ForegroundColor = ConsoleColor.DarkGray;
+                    //Console.WriteLine("(2) Download & Update the current image. -  No internet ");
+                    //disbaledoptions.Add(2);
+
+                    //Console.ForegroundColor = ConsoleColor.White;
+
+                    Console.WriteLine("(2) Exit.");
+
+                    string choice = Console.ReadLine();
+                    if (disbaledoptions.Contains(Int32.Parse(choice)))
                     {
+                        Console.WriteLine("This option is diabled.");
 
 
                     }
                     else
                     {
-                        Console.WriteLine("Starting over");
+                        if (choice == "1")
+                        {
+                            break;
+                        }
+                        if (choice == "2")
+                        {
+                            Console.WriteLine("Now exiting. Run exit to reboot.");
+                            Environment.Exit(0);
+
+                        }
                     }
 
 
+                }
+
+                Console.WriteLine("Getting Disks.");
+
+
+                //    DriveInfo[] drives = DriveInfo.GetDrives();
+                //    foreach (DriveInfo drive in drives)
+                //    {
+                //        if (drive.IsReady)
+                //        {
+                //            string label = drive.VolumeLabel;
+                //            if (label == "" || label == " ")
+                //            {
+                //                label = "(no label)";
+                //            }
+                //            drive_array.Add(label + " - " + drive.TotalSize / 1000 / 1024 + "MB");
+                //        }
+                //    }
+                //    foreach (string drive in drive_array)
+                //    {
+                //        Console.WriteLine("[" + drive_array.IndexOf(drive) + "] " + drive);
+
+                //    }
+                //    while (true)
+                //    {
+                //        try
+                //        {
+                //            Console.WriteLine("Pick a drive you would like to use.");
+                //            int temp = Int32.Parse(Console.ReadLine());
+
+                //            driveindex = temp;
+                //            temp = 0;
+                //            Console.WriteLine(drive_array[driveindex]);
+                //            break;
 
 
 
+                //        }
+                //        catch (Exception e)
+                //        {
+                //            Console.WriteLine("Invalid Selection. Try again.");
+                //        }
+                //    }
+
+                //    drivename = drive_array[driveindex].Split('-')[0];
+                //    Console.WriteLine(drivename);
+                //    Console.ReadLine();
+                //}
+                // execute DiskPart programatically
+                Process process = new Process();
+                process.StartInfo.FileName = "diskpart.exe";
+                process.StartInfo.UseShellExecute = false;
+                process.StartInfo.CreateNoWindow = true;
+                process.StartInfo.RedirectStandardInput = true;
+                process.StartInfo.RedirectStandardOutput = true;
+                process.Start();
+                process.StandardInput.WriteLine("list disk");
+                process.StandardInput.WriteLine("exit");
+
+                string output = process.StandardOutput.ReadToEnd();
+                process.WaitForExit();
+
+
+                // extract information from output
+                string table = output.Split(new string[] { "DISKPART>" }, StringSplitOptions.None)[1];
+                var rows = table.Split(new string[] { "\n" }, StringSplitOptions.None);
+                for (int i = 3; i < rows.Length; i++)
+                {
+                    // if (rows[i].Contains("Disk"))
+                    //  {
+                    int index = Int32.Parse(rows[i].Split(new string[] { " " }, StringSplitOptions.None)[3]);
+                    string label = rows[i].Split(new string[] { " " }, StringSplitOptions.None)[16] + " " + rows[i].Split(new string[] { " " }, StringSplitOptions.None)[17];
+                    // long size = 0;
+
+
+                    //foreach (DriveInfo drive in DriveInfo.GetDrives())
+                    //{
+
+                    //    if (drive.IsReady && drive.VolumeLabel == label)
+                    //    {
+                    //        size = (long)(drive.TotalSize / 1000 / 1024);
+                    //    }
+                    //}
+                    Console.WriteLine(output);
+                    //    }
 
 
 
-
-                    Console.WriteLine(" (1/3) Formatting Drive");
-                    if (program.Format(drivesel))
+                    Console.WriteLine("Select a disk number");
+                    drivesel = program.GetIndexOfDrive(Console.ReadLine());
+                    if (drivesel == -1)
                     {
-
-                        Console.WriteLine(" (2/3) Deploying Image - This may take awhile");
-
-                        if (program.Install(drivesel))
+                        Console.WriteLine("Invalid Selection.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Are you sure you want to continue with " + drivesel + "?");
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("ALL DATA ON THAT DRIVE WILL BE FORMATTED!!!");
+                        Console.ForegroundColor = ConsoleColor.White;
+                        string answer = Console.ReadLine();
+                        if (answer == "Y" || answer == "y")
                         {
 
-                            Console.WriteLine(" (3/3) Adding BCD Records");
-                            if (program.BCDRecords(drivesel))
-                            {
-                                Console.WriteLine("Windows 11 has been deployed! ");
-                                Console.WriteLine("Run 'exit' to reboot. ");
 
-                                Environment.Exit(0);
+                        }
+                        else
+                        {
+                            Console.WriteLine("Starting over");
+                        }
+
+
+
+
+
+
+
+
+
+                        Console.WriteLine(" (1/3) Formatting Drive");
+                        if (program.Format(drivesel))
+                        {
+
+                            Console.WriteLine(" (2/3) Deploying Image - This may take awhile");
+
+                            if (program.Install(drivesel))
+                            {
+
+                                Console.WriteLine(" (3/3) Adding BCD Records");
+                                if (program.BCDRecords(drivesel))
+                                {
+                                    Console.WriteLine("Windows 11 has been deployed! ");
+                                    Console.WriteLine("Run 'exit' to reboot. ");
+
+                                    Environment.Exit(0);
+
+                                }
 
                             }
 
                         }
-
                     }
+
+
+
                 }
-
-
-
             }
-
 
         }
 
@@ -425,6 +437,66 @@ namespace WIndowsImageDeployerPE
             Console.WriteLine("CPU: " + key?.GetValue("ProcessorNameString").ToString() ?? "Not Found");
 
             Console.WriteLine("Firmware Type : " + Environment.GetEnvironmentVariable("firmware_type"));
+        }
+        public void Download_Save()
+        {
+            try
+            {
+
+                Console.WriteLine("\nSelect a folder to save the ISO");
+                FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
+                if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
+                {
+
+                    if (File.Exists(folderBrowserDialog.SelectedPath + "\\Windows11Deployer.iso"))
+                    {
+                        Console.WriteLine("ISO Already exists! Do you want to overwite? Y/N");
+                        ConsoleKey consoleKey1 = Console.ReadKey(true).Key;
+                        if (consoleKey1 == ConsoleKey.Y)
+                        {
+                            File.Delete(folderBrowserDialog.SelectedPath + "\\Windows11Deployer.iso");
+                            while (File.Exists(folderBrowserDialog.SelectedPath + "\\Windows11Deployer.iso")) { }
+                        }
+                        else
+                        {
+                            Download_Save();
+                        }
+
+
+
+                    }
+
+                    Console.WriteLine("Saving ISO to " + folderBrowserDialog.SelectedPath);
+                    progress progress = new progress(folderBrowserDialog.SelectedPath);
+                    progress.ShowDialog();
+                    progress.Dispose();
+                    Console.WriteLine("Finished! Press any key to exit.");
+                    Console.ReadKey();
+                    Application.Exit();
+
+                }
+            }
+            catch (Exception ex)
+            {
+               Console.WriteLine(ex.Message);
+            }
+        }
+                   
+
+
+
+        private void Client_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
+        {
+
+            Console.SetCursorPosition(left, top);
+            Console.Write("Downloaded Percentage: {0}", e.ProgressPercentage);
+
+
+        }
+
+        private void Client_DownloadFileCompleted(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
+        {
+        
         }
     }
 }
