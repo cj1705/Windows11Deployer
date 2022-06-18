@@ -16,45 +16,56 @@ namespace WIndowsImageDeployerPE
         int left = Console.CursorLeft;
         int top = Console.CursorTop; 
         Microsoft.VisualBasic.Devices.ComputerInfo ComputerInfo = new Microsoft.VisualBasic.Devices.ComputerInfo();
+        string version = "1.1";
         [STAThread]
-     
+       
         public static void Main(string[] args)
         {
 
-           
+
             WIndowsImageDeployerPE.Program program = new WIndowsImageDeployerPE.Program();
             List<string> drive_array = new List<string>();
             int driveindex = 0;
             int drivesel;
             string drivename = " ";
             List<int> disbaledoptions = new List<int>();
-          
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.Clear();
-                Console.WriteLine("--------Windows 11 Deployer--------");
-                Console.WriteLine("Created by Carson Games \n");
+           
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Clear();
+            Console.WriteLine("--------Windows 11 Deployer--------");
+            Console.WriteLine("Created by Carson Games");
+            Console.WriteLine("Version : " + program.version + "\n");
+            program.DisplaySystemInfo();
 
-                program.DisplaySystemInfo();
-
-                Console.WriteLine("-----------------------------------");
+            Console.WriteLine("-----------------------------------");
 
 
-                if (!program.isWinPE())
+           
+
+            if (!program.isWinPE())
                 {
                     Console.WriteLine("You are not currently booted into WindowsPE. This setup will not work on normal windows\nas the required files are not in normal windows. Please use this setup within WindowsPE.");
                     Console.WriteLine("Press Y to download a copy of the bootable ISO or press any other key to exit.");
 
                     ConsoleKey consoleKey = Console.ReadKey().Key;
-                if (consoleKey == ConsoleKey.Y)
-                {
-                    program.Download_Save();
+                    if (consoleKey == ConsoleKey.Y)
+                    {
+                        program.Download_Save();
+                    }
                 }
+            
+        
+            else
+            {
+                if (program.isUEFI())
+                {
+                    Console.WriteLine("UEFI is currently not supported. Program will now exit.");
+                    Environment.Exit(0);
 
                 }
-                else
-                {
                 while (true)
                 {
+                   
                     Console.WriteLine("Select a option below.");
 
                     Console.WriteLine("(1) Install using the currently loaded image.");
@@ -209,6 +220,27 @@ namespace WIndowsImageDeployerPE
                         }
 
 
+                        Console.WriteLine("Getting Windows Editions..");
+
+                        Process process1 = new Process();
+                        process1.StartInfo.FileName = "dism.exe";
+                        process1.StartInfo.Arguments = "/Get-WimInfo /WimFile:install.wim";
+                        process1.StartInfo.UseShellExecute = false;
+                        process1.StartInfo.CreateNoWindow = true;
+                        process1.StartInfo.RedirectStandardInput = true;
+                        process1.StartInfo.RedirectStandardOutput = true;
+                        process1.Start();
+                        string output1 = process1.StandardOutput.ReadToEnd();
+
+                        process1.WaitForExit();
+
+                        Console.WriteLine(output1);
+
+                        Console.WriteLine("Select the edition of windows you would like installed.");
+                        answer = Console.ReadLine();
+
+                        int indexsel = int.Parse(answer);
+
 
 
 
@@ -222,7 +254,7 @@ namespace WIndowsImageDeployerPE
 
                             Console.WriteLine(" (2/3) Deploying Image - This may take awhile");
 
-                            if (program.Install(drivesel))
+                            if (program.Install(indexsel))
                             {
 
                                 Console.WriteLine(" (3/3) Adding BCD Records");
@@ -236,6 +268,10 @@ namespace WIndowsImageDeployerPE
                                 }
 
                             }
+                            else
+                            {
+                                program.Error();
+                            }
 
                         }
                     }
@@ -245,6 +281,11 @@ namespace WIndowsImageDeployerPE
                 }
             }
 
+        }
+        public void Error()
+        {
+            Console.WriteLine("An error occured while deploying windows! Please look at the above error for more info. \n\n Type 'exit' to reboot.");
+            Environment.Exit(0);
         }
 
         public bool isWinPE()
@@ -262,25 +303,25 @@ namespace WIndowsImageDeployerPE
                 }
             }
         }
-        public void wc_DownloadProgressChanged(Object sender, DownloadProgressChangedEventArgs e)
+        //public void wc_DownloadProgressChanged(Object sender, DownloadProgressChangedEventArgs e)
 
-        {
-            Console.WriteLine("Downloading Image. - " + e.ProgressPercentage + "% complete.");
-            Console.SetCursorPosition(0, Console.CursorTop - 1);
-
-
-
-        }
-        public bool wc_DownloadProgressFinsihed(Object sender, DownloadStringCompletedEventArgs e)
-
-        {
-
-            Console.WriteLine("Completed!");
+        //{
+        ////    Console.WriteLine("Downloading Image. - " + e.ProgressPercentage + "% complete.");
+        ////    Console.SetCursorPosition(0, Console.CursorTop - 1);
 
 
-            return true;
 
-        }
+        //}
+        //public bool wc_DownloadProgressFinsihed(Object sender, DownloadStringCompletedEventArgs e)
+
+        //{
+
+        //    //Console.WriteLine("Completed!");
+
+
+        //    //return true;
+
+        //}
         //public bool UpdateFile()
         //{
 
@@ -294,19 +335,19 @@ namespace WIndowsImageDeployerPE
 
 
 
-        public bool IsConnectedToInternet()
-        {
-            string host = "carsongames.com";
-            Ping p = new Ping();
-            try
-            {
-                PingReply reply = p.Send(host, 3000);
-                if (reply.Status == IPStatus.Success)
-                    return true;
-            }
-            catch { }
-            return false;
-        }
+        //public bool IsConnectedToInternet()
+        //{
+        //    string host = "carsongames.com";
+        //    Ping p = new Ping();
+        //    try
+        //    {
+        //        PingReply reply = p.Send(host, 3000);
+        //        if (reply.Status == IPStatus.Success)
+        //            return true;
+        //    }
+        //    catch { }
+        //    return false;
+        //}
         public bool isUEFI()
         {
             if (Environment.GetEnvironmentVariable("firmware_type") == "UEFI" || Environment.GetEnvironmentVariable("firmware_type") == "EFI")
@@ -332,9 +373,9 @@ namespace WIndowsImageDeployerPE
             process.StandardInput.WriteLine("create partition primary size=100");
             process.StandardInput.WriteLine("format quick fs=ntfs label=System");
             process.StandardInput.WriteLine("assign letter=S");
-            if (!isUEFI())
-            {
-                process.StandardInput.WriteLine("active");
+           if (!isUEFI())
+           {
+               process.StandardInput.WriteLine("active");
             }
             process.StandardInput.WriteLine("create partition primary");
             process.StandardInput.WriteLine("shrink minimum=650");
@@ -357,7 +398,7 @@ namespace WIndowsImageDeployerPE
 
             Process process = new Process();
             process.StartInfo.FileName = "dism.exe";
-            process.StartInfo.Arguments = "/apply-image /imagefile:install.wim /index:1 /ApplyDir:W:\\";
+            process.StartInfo.Arguments = $"/apply-image /imagefile:install.wim /index:{index} /ApplyDir:W:\\";
             process.StartInfo.UseShellExecute = false;
             process.StartInfo.CreateNoWindow = true;
             process.StartInfo.RedirectStandardInput = true;
@@ -368,6 +409,15 @@ namespace WIndowsImageDeployerPE
 
             string output = process.StandardOutput.ReadToEnd();
             process.WaitForExit();
+            if (process.ExitCode != 0)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($" An Error occured while applying the image. \n\n DISM error {process.ExitCode}");
+                Console.ForegroundColor= ConsoleColor.White;
+
+                return false;
+            }
+          
             return true;
         }
         void process_OutputDataReceived(object sender, DataReceivedEventArgs e)

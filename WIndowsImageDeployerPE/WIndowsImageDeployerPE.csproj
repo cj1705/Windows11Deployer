@@ -51,11 +51,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FIleDownloader.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="progress.cs">
+    <Compile Include="forms\progress.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="progress.Designer.cs">
+    <Compile Include="forms\progress.Designer.cs">
       <DependentUpon>progress.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -66,7 +67,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="progress.resx">
+    <EmbeddedResource Include="forms\progress.resx">
       <DependentUpon>progress.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
