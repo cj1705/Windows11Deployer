@@ -5,16 +5,7 @@ using System.IO;
 using System.Net;
 using System.Text;
 
-/* EXAMPLE USAGE
-	FileDownloader fileDownloader = new FileDownloader();
 
-	// This callback is triggered for DownloadFileAsync only
-	fileDownloader.DownloadProgressChanged += ( sender, e ) => Console.WriteLine( "Progress changed " + e.BytesReceived + " " + e.TotalBytesToReceive );
-	// This callback is triggered for both DownloadFile and DownloadFileAsync
-	fileDownloader.DownloadFileCompleted += ( sender, e ) => Console.WriteLine( "Download completed" );
-
-	fileDownloader.DownloadFileAsync( "https://INSERT_DOWNLOAD_LINK_HERE", @"C:\downloadedFile.txt" );
-*/
 public class FileDownloader : IDisposable
 {
 	private const string GOOGLE_DRIVE_DOMAIN = "drive.google.com";
@@ -24,7 +15,7 @@ public class FileDownloader : IDisposable
 	//   1. an NID cookie is returned instead of a download_warning cookie
 	//   2. download_warning cookie returned
 	//   3. the actual file is downloaded
-	private const int GOOGLE_DRIVE_MAX_DOWNLOAD_ATTEMPT = 3;
+	private const int GOOGLE_DRIVE_MAX_DOWNLOAD_ATTEMPT = 6;
 
 	public delegate void DownloadProgressChangedEventHandler(object sender, DownloadProgress progress);
 
@@ -91,10 +82,35 @@ public class FileDownloader : IDisposable
 
 		protected override WebResponse GetWebResponse(WebRequest request, IAsyncResult result)
 		{
-			return ProcessResponse(base.GetWebResponse(request, result));
-		}
+			try
+			{
+				return ProcessResponse(base.GetWebResponse(request, result));
+			}
+            catch (WebException e)
+            {
+				Console.WriteLine("Error while downloading! - " + e.Message);
+				if (e.Status == WebExceptionStatus.ProtocolError)
+				{
+					var httpResponse = (HttpWebResponse)e.Response;
+					var responseText = "";
+					using (var content = new StreamReader(httpResponse.GetResponseStream()))
+					{
+						responseText = content.ReadToEnd(); // Get response body as text
+					}
+					int statusCode = (int)httpResponse.StatusCode; // Get the status code
+					if (statusCode == 403)
+					{
+						WIndowsImageDeployerPE.forms._403 _403 = new WIndowsImageDeployerPE.forms._403();
+						_403.ShowDialog();
+					}
+				}
+				return null;
+            }
 
-		protected override WebResponse GetWebResponse(WebRequest request)
+            }
+
+
+        protected override WebResponse GetWebResponse(WebRequest request)
 		{
 			return ProcessResponse(base.GetWebResponse(request));
 		}
@@ -165,32 +181,42 @@ public class FileDownloader : IDisposable
 
 	public void DownloadFileAsync(string address, string fileName, object userToken = null)
 	{
+
 		DownloadFile(address, fileName, true, userToken);
 	}
 
 	private void DownloadFile(string address, string fileName, bool asyncDownload, object userToken)
 	{
-		downloadingDriveFile = address.StartsWith(GOOGLE_DRIVE_DOMAIN) || address.StartsWith(GOOGLE_DRIVE_DOMAIN2);
-		if (downloadingDriveFile)
+		try
 		{
-			address = GetGoogleDriveDownloadAddress(address);
-			driveDownloadAttempt = 1;
+			downloadingDriveFile = address.StartsWith(GOOGLE_DRIVE_DOMAIN) || address.StartsWith(GOOGLE_DRIVE_DOMAIN2);
+			if (downloadingDriveFile)
+			{
+				address = GetGoogleDriveDownloadAddress(address);
+				driveDownloadAttempt = 1;
 
-			webClient.ContentRangeTarget = downloadProgress;
+				webClient.ContentRangeTarget = downloadProgress;
+			}
+			else
+				webClient.ContentRangeTarget = null;
+
+			downloadAddress = new Uri(address);
+			downloadPath = fileName;
+
+			downloadProgress.TotalBytesToReceive = -1L;
+			downloadProgress.UserState = userToken;
+
+			this.asyncDownload = asyncDownload;
+			this.userToken = userToken;
+
+			DownloadFileInternal();
+
 		}
-		else
-			webClient.ContentRangeTarget = null;
-
-		downloadAddress = new Uri(address);
-		downloadPath = fileName;
-
-		downloadProgress.TotalBytesToReceive = -1L;
-		downloadProgress.UserState = userToken;
-
-		this.asyncDownload = asyncDownload;
-		this.userToken = userToken;
-
-		DownloadFileInternal();
+		catch (WebException e)
+		{
+			Console.WriteLine("Error While Downloading! - " + e.Message);
+			
+		}
 	}
 
 	private void DownloadFileInternal()
@@ -281,10 +307,6 @@ public class FileDownloader : IDisposable
 		return true;
 	}
 
-	// Handles the following formats (links can be preceeded by https://):
-	// - drive.google.com/open?id=FILEID&resourcekey=RESOURCEKEY
-	// - drive.google.com/file/d/FILEID/view?usp=sharing&resourcekey=RESOURCEKEY
-	// - drive.google.com/uc?id=FILEID&export=download&resourcekey=RESOURCEKEY
 	private string GetGoogleDriveDownloadAddress(string address)
 	{
 		int index = address.IndexOf("id=");

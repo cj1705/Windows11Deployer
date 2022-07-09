@@ -14,11 +14,11 @@ namespace WIndowsImageDeployerPE
     internal class Program
     {
         int left = Console.CursorLeft;
-        int top = Console.CursorTop; 
+        int top = Console.CursorTop;
         Microsoft.VisualBasic.Devices.ComputerInfo ComputerInfo = new Microsoft.VisualBasic.Devices.ComputerInfo();
-        string version = "1.1";
+        string version = "1.1.1";
         [STAThread]
-       
+
         public static void Main(string[] args)
         {
 
@@ -29,32 +29,30 @@ namespace WIndowsImageDeployerPE
             int drivesel;
             string drivename = " ";
             List<int> disbaledoptions = new List<int>();
-           
+
             Console.ForegroundColor = ConsoleColor.White;
             Console.Clear();
-            Console.WriteLine("--------Windows 11 Deployer--------");
-            Console.WriteLine("Created by Carson Games");
-            Console.WriteLine("Version : " + program.version + "\n");
+            //   Console.WriteLine("--------Windows 11 Deployer--------");
+            Console.WriteLine(Resource1.logo);
+            //  Console.WriteLine("Created by Carson Games");
+            Console.WriteLine("\nVersion : " + program.version + "\n");
             program.DisplaySystemInfo();
 
-            Console.WriteLine("-----------------------------------");
+            //    Console.WriteLine("-----------------------------------");
 
 
-           
+
 
             if (!program.isWinPE())
-                {
-                    Console.WriteLine("You are not currently booted into WindowsPE. This setup will not work on normal windows\nas the required files are not in normal windows. Please use this setup within WindowsPE.");
-                    Console.WriteLine("Press Y to download a copy of the bootable ISO or press any other key to exit.");
+            {
+                Console.WriteLine("\nWinPE Not Detected! Launching ISO Downloader");
 
-                    ConsoleKey consoleKey = Console.ReadKey().Key;
-                    if (consoleKey == ConsoleKey.Y)
-                    {
-                        program.Download_Save();
-                    }
-                }
-            
-        
+
+                program.Download_Save();
+
+            }
+
+
             else
             {
                 if (program.isUEFI())
@@ -65,7 +63,7 @@ namespace WIndowsImageDeployerPE
                 }
                 while (true)
                 {
-                   
+
                     Console.WriteLine("Select a option below.");
 
                     Console.WriteLine("(1) Install using the currently loaded image.");
@@ -373,9 +371,9 @@ namespace WIndowsImageDeployerPE
             process.StandardInput.WriteLine("create partition primary size=100");
             process.StandardInput.WriteLine("format quick fs=ntfs label=System");
             process.StandardInput.WriteLine("assign letter=S");
-           if (!isUEFI())
-           {
-               process.StandardInput.WriteLine("active");
+            if (!isUEFI())
+            {
+                process.StandardInput.WriteLine("active");
             }
             process.StandardInput.WriteLine("create partition primary");
             process.StandardInput.WriteLine("shrink minimum=650");
@@ -413,11 +411,11 @@ namespace WIndowsImageDeployerPE
             {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine($" An Error occured while applying the image. \n\n DISM error {process.ExitCode}");
-                Console.ForegroundColor= ConsoleColor.White;
+                Console.ForegroundColor = ConsoleColor.White;
 
                 return false;
             }
-          
+
             return true;
         }
         void process_OutputDataReceived(object sender, DataReceivedEventArgs e)
@@ -493,38 +491,16 @@ namespace WIndowsImageDeployerPE
             try
             {
 
-                Console.WriteLine("\nSelect a folder to save the ISO");
-                FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
-                if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
-                {
+             
 
-                    if (File.Exists(folderBrowserDialog.SelectedPath + "\\Windows11Deployer.iso"))
-                    {
-                        Console.WriteLine("ISO Already exists! Do you want to overwite? Y/N");
-                        ConsoleKey consoleKey1 = Console.ReadKey(true).Key;
-                        if (consoleKey1 == ConsoleKey.Y)
-                        {
-                            File.Delete(folderBrowserDialog.SelectedPath + "\\Windows11Deployer.iso");
-                            while (File.Exists(folderBrowserDialog.SelectedPath + "\\Windows11Deployer.iso")) { }
-                        }
-                        else
-                        {
-                            Download_Save();
-                        }
+                progress progress = new progress();
+                progress.ShowDialog();
+                progress.Dispose();
+                Console.WriteLine("Finished! Press any key to exit.");
+                Console.ReadKey();
+                Application.Exit();
 
-
-
-                    }
-
-                    Console.WriteLine("Saving ISO to " + folderBrowserDialog.SelectedPath);
-                    progress progress = new progress(folderBrowserDialog.SelectedPath);
-                    progress.ShowDialog();
-                    progress.Dispose();
-                    Console.WriteLine("Finished! Press any key to exit.");
-                    Console.ReadKey();
-                    Application.Exit();
-
-                }
+            
             }
             catch (Exception ex)
             {

@@ -52,6 +52,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FIleDownloader.cs" />
+    <Compile Include="forms\403.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="forms\403.Designer.cs">
+      <DependentUpon>403.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="forms\progress.cs">
       <SubType>Form</SubType>
@@ -60,6 +66,11 @@
       <DependentUpon>progress.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Resource1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resource1.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -67,9 +78,22 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="forms\403.resx">
+      <DependentUpon>403.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="forms\progress.resx">
       <DependentUpon>progress.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Resource1.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resource1.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\logo.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\403.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

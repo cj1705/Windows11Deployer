@@ -14,24 +14,45 @@ namespace WIndowsImageDeployerPE
 {
     public partial class progress : Form
     {
-        string loc = " ";
-        public progress(string location)
+        string loc;
+        public progress()
         {
-         
-                InitializeComponent();
-              
-                loc = location;
 
-               
-                
-            
-          
+            InitializeComponent();
+
+            Console.WriteLine("\nSelect a folder to save the ISO");
+            FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
+            folderBrowserDialog.SelectedPath = System.IO.Directory.GetCurrentDirectory();
+            if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
+            {
+                loc = folderBrowserDialog.SelectedPath;
+                if (File.Exists(folderBrowserDialog.SelectedPath + "\\Windows11Deployer.iso"))
+                {
+                    DialogResult dialogResult = MessageBox.Show("ISO Exists at this location! Overwrite?", "ISO Exists", MessageBoxButtons.YesNo);
+                    if (dialogResult == DialogResult.Yes)
+                    {
+                        File.Delete(folderBrowserDialog.SelectedPath + "\\Windows11Deployer.iso");
+                        while (File.Exists(folderBrowserDialog.SelectedPath + "\\Windows11Deployer.iso")) { }
+                    }
+
+                  
+
+
+                }
+                Console.WriteLine(loc);
             }
 
-        private void Client_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
+
+
+
+
+
+            }
+
+            private void Client_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
-          
-          
+
+
         }
 
         private void Client_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
@@ -43,13 +64,13 @@ namespace WIndowsImageDeployerPE
             }
             MessageBox.Show("Download Finished!");
 
-               Environment.Exit(0);
+            Environment.Exit(0);
         }
 
 
         private void progress_Load(object sender, EventArgs e)
         {
-         
+
 
             WebClient wc = new WebClient();
             //string lines = wc.DownloadString("https://chaosityyoutube.com/carson/Windows-11-deployer/list.txt");
@@ -58,32 +79,43 @@ namespace WIndowsImageDeployerPE
 
             //    item.SubItems.Add(line.ToString().Split(':')[1].ToString());
             //}
-            using (Stream stream = wc.OpenRead("https://chaosityyoutube.com/carson/Windows-11-deployer/list.txt"))
+            try
             {
-                using (StreamReader reader = new StreamReader(stream))
+                using (Stream stream = wc.OpenRead("https://projects.carsongames.com/windows11deployer/list.txt"))
                 {
-                    string line;
-
-                    while ((line = reader.ReadLine()) != null)
+                    using (StreamReader reader = new StreamReader(stream))
                     {
+                        string line;
 
-                    
-
-                        ListViewItem listViewItem = new ListViewItem(line.Split(';')[0].ToString());
-                        listViewItem.SubItems.Add(line.Split(';')[1].ToString());
-                        listView1.Items.Add(listViewItem);
-
-                         }
+                        while ((line = reader.ReadLine()) != null)
+                        {
 
 
+
+                            ListViewItem listViewItem = new ListViewItem(line.Split(';')[0].ToString());
+                            listViewItem.SubItems.Add(line.Split(';')[1].ToString());
+                            listView1.Items.Add(listViewItem);
+
+                        }
+
+
+                    }
                 }
             }
-        }
+            catch (WebException e1)
+            {
+                Console.WriteLine("Error! - " + e1.Message);
+                this.Close();
+            }
+            
+        
+    }
 
         private void button1_Click(object sender, EventArgs e)
         {
             try
             {
+              
                 FileDownloader client = new FileDownloader();
                 client.DownloadFileCompleted += Client_DownloadFileCompleted;
                 client.DownloadProgressChanged += Client_DownloadProgressChanged1;

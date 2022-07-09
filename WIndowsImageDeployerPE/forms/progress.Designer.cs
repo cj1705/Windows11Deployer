@@ -48,7 +48,7 @@
             this.label1.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.label1.Location = new System.Drawing.Point(0, 176);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(236, 13);
+            this.label1.Size = new System.Drawing.Size(240, 13);
             this.label1.TabIndex = 1;
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
@@ -94,7 +94,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(236, 189);
+            this.ClientSize = new System.Drawing.Size(240, 189);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.listView1);
             this.Controls.Add(this.button1);
