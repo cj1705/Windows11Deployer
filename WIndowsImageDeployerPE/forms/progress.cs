@@ -39,7 +39,7 @@ namespace WIndowsImageDeployerPE
 
 
                 }
-                Console.WriteLine(loc);
+                Console.WriteLine("ISO Is being saved to - " + loc);
             }
 
 
@@ -63,6 +63,7 @@ namespace WIndowsImageDeployerPE
                 Application.Exit();
             }
             MessageBox.Show("Download Finished!");
+           
 
             Environment.Exit(0);
         }
@@ -115,6 +116,7 @@ namespace WIndowsImageDeployerPE
         {
             try
             {
+                progressBar1.Visible = true;
               
                 FileDownloader client = new FileDownloader();
                 client.DownloadFileCompleted += Client_DownloadFileCompleted;
@@ -125,7 +127,10 @@ namespace WIndowsImageDeployerPE
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.StackTrace);
+
+                Console.WriteLine("Error! - " + ex.Message);
+                MessageBox.Show(" A Error occured! Look at the main console window for more details.");
+             
             }
         }
 
@@ -133,7 +138,7 @@ namespace WIndowsImageDeployerPE
         {
             progressBar1.Value = e.ProgressPercentage;
             label1.Text = $"{e.BytesReceived} / {e.TotalBytesToReceive} Bytes";
-            label2.Text = $"{e.ProgressPercentage}%";
+            label4.Text = $"{e.ProgressPercentage}%";
         }
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -142,6 +147,11 @@ namespace WIndowsImageDeployerPE
         }
 
         private void listView1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label1_Click(object sender, EventArgs e)
         {
 
         }

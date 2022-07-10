@@ -16,7 +16,7 @@ namespace WIndowsImageDeployerPE
         int left = Console.CursorLeft;
         int top = Console.CursorTop;
         Microsoft.VisualBasic.Devices.ComputerInfo ComputerInfo = new Microsoft.VisualBasic.Devices.ComputerInfo();
-        string version = "1.1.1";
+        string version = "1.2";
         [STAThread]
 
         public static void Main(string[] args)
@@ -32,13 +32,14 @@ namespace WIndowsImageDeployerPE
 
             Console.ForegroundColor = ConsoleColor.White;
             Console.Clear();
-            //   Console.WriteLine("--------Windows 11 Deployer--------");
+              Console.WriteLine("--------Windows 11 Deployer-----------------------");
             Console.WriteLine(Resource1.logo);
+              Console.WriteLine("--------------------------------------------------");
             //  Console.WriteLine("Created by Carson Games");
             Console.WriteLine("\nVersion : " + program.version + "\n");
             program.DisplaySystemInfo();
 
-            //    Console.WriteLine("-----------------------------------");
+          
 
 
 
