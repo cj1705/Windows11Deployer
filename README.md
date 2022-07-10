@@ -1,6 +1,6 @@
 # Windows11Deployer
 
-A alternative to the normal Windows 11 Home installer but without the system requirements. 
+A alternative to the normal Windows 11 nstaller but without the system requirements. 
 
 
 How does it work?
