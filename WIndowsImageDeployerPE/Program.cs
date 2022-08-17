@@ -56,16 +56,16 @@ namespace WIndowsImageDeployerPE
 
             else
             {
-                if (program.isUEFI())
-                {
-                    Console.WriteLine("UEFI is currently not supported. Program will now exit.");
-                    Environment.Exit(0);
+                //if (program.isUEFI())
+                //{
+                //    Console.WriteLine("UEFI is currently not supported. Program will now exit.");
+                //    Environment.Exit(0);
 
-                }
+                //}
                 while (true)
                 {
 
-                    Console.WriteLine("Select a option below.");
+                    Console.WriteLine("\nSelect a option below.");
 
                     Console.WriteLine("(1) Install using the currently loaded image.");
 
@@ -361,37 +361,65 @@ namespace WIndowsImageDeployerPE
         public bool Format(int index)
         {
             Process process = new Process();
-            process.StartInfo.FileName = "diskpart.exe";
-            process.StartInfo.UseShellExecute = false;
-            process.StartInfo.CreateNoWindow = true;
-            process.StartInfo.RedirectStandardInput = true;
-            process.StartInfo.RedirectStandardOutput = true;
-            process.Start();
-            process.StandardInput.WriteLine("select disk " + index);
-            process.StandardInput.WriteLine("clean");
-            process.StandardInput.WriteLine("create partition primary size=100");
-            process.StandardInput.WriteLine("format quick fs=ntfs label=System");
-            process.StandardInput.WriteLine("assign letter=S");
-            if (!isUEFI())
+            if (isUEFI())
             {
-                process.StandardInput.WriteLine("active");
+
+                process.StartInfo.FileName = "diskpart.exe";
+                process.StartInfo.UseShellExecute = false;
+                process.StartInfo.CreateNoWindow = true;
+                process.StartInfo.RedirectStandardInput = true;
+                process.StartInfo.RedirectStandardOutput = true;
+                process.Start();
+                process.StandardInput.WriteLine("select disk " + index);
+                process.StandardInput.WriteLine("clean");
+                process.StandardInput.WriteLine("convert gpt");
+                process.StandardInput.WriteLine("create part efi size=500");
+                process.StandardInput.WriteLine("format fs=fat32");
+                process.StandardInput.WriteLine("assign letter=s");
+                process.StandardInput.WriteLine("create part pri");
+                process.StandardInput.WriteLine("format quick fs=ntfs");
+                process.StandardInput.WriteLine("assign letter=w");
+
+
+
+                process.StandardInput.WriteLine("exit");
+
+
+                string output1 = process.StandardOutput.ReadToEnd();
+                process.WaitForExit();
+                return true;
             }
-            process.StandardInput.WriteLine("create partition primary");
-            process.StandardInput.WriteLine("shrink minimum=650");
-            process.StandardInput.WriteLine("format quick fs=ntfs label=Windows");
-            process.StandardInput.WriteLine("assign letter=W");
-            process.StandardInput.WriteLine("create partition primary");
-            process.StandardInput.WriteLine("format quick fs=ntfs label=Recovery");
-            process.StandardInput.WriteLine("assign letter=R");
-            process.StandardInput.WriteLine("set id=27");
+            else
+            {
+                process.StartInfo.FileName = "diskpart.exe";
+                process.StartInfo.UseShellExecute = false;
+                process.StartInfo.CreateNoWindow = true;
+                process.StartInfo.RedirectStandardInput = true;
+                process.StartInfo.RedirectStandardOutput = true;
+                process.Start();
+                process.StandardInput.WriteLine("select disk " + index);
+                process.StandardInput.WriteLine("clean");
+                process.StandardInput.WriteLine("create partition primary size=100");
+                process.StandardInput.WriteLine("format quick fs=ntfs label=System");
+                process.StandardInput.WriteLine("assign letter=S");
+                process.StandardInput.WriteLine("create partition primary");
+                process.StandardInput.WriteLine("shrink minimum=650");
+                process.StandardInput.WriteLine("format quick fs=ntfs label=Windows");
+                process.StandardInput.WriteLine("assign letter=W");
+                process.StandardInput.WriteLine("create partition primary");
+                process.StandardInput.WriteLine("format quick fs=ntfs label=Recovery");
+                process.StandardInput.WriteLine("assign letter=R");
+                process.StandardInput.WriteLine("set id=27");
 
-            process.StandardInput.WriteLine("exit");
+                process.StandardInput.WriteLine("exit");
 
 
-            string output = process.StandardOutput.ReadToEnd();
-            process.WaitForExit();
-            return true;
+                string output = process.StandardOutput.ReadToEnd();
+                process.WaitForExit();
+                return true;
+            }
         }
+       
         public bool Install(int index)
         {
 
@@ -426,16 +454,34 @@ namespace WIndowsImageDeployerPE
         public bool BCDRecords(int index)
         {
             Process process = new Process();
-            process.StartInfo.UseShellExecute = false;
-            process.StartInfo.CreateNoWindow = true;
-            process.StartInfo.RedirectStandardInput = true;
-            process.StartInfo.RedirectStandardOutput = true;
-            process.StartInfo.FileName = "x:\\windows\\system32\\bcdboot.exe";
-            process.StartInfo.Arguments = " w:\\windows /s S: /f ALL";
-            process.Start();
-            string output = process.StandardOutput.ReadToEnd();
-            process.WaitForExit();
-            return true;
+            if (isUEFI())
+            {
+
+                process.StartInfo.UseShellExecute = false;
+                process.StartInfo.CreateNoWindow = true;
+                process.StartInfo.RedirectStandardInput = true;
+                process.StartInfo.RedirectStandardOutput = true;
+                process.StartInfo.FileName = "x:\\windows\\system32\\bcdboot.exe";
+                process.StartInfo.Arguments = "w:\\Windows /s S:";
+                process.Start();
+                string output1 = process.StandardOutput.ReadToEnd();
+                process.WaitForExit();
+                return true;
+            }
+            else
+            {
+
+                process.StartInfo.UseShellExecute = false;
+                process.StartInfo.CreateNoWindow = true;
+                process.StartInfo.RedirectStandardInput = true;
+                process.StartInfo.RedirectStandardOutput = true;
+                process.StartInfo.FileName = "x:\\windows\\system32\\bcdboot.exe";
+                process.StartInfo.Arguments = " w:\\windows /s S: /f ALL";
+                process.Start();
+                string output = process.StandardOutput.ReadToEnd();
+                process.WaitForExit();
+                return true;
+            }
         }
 
 

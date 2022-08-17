@@ -1,7 +1,8 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\WIndowsImageDeployerPE"
   ],
-  "SelectedNode": "\\WIndowsImageDeployerPE.sln",
+  "SelectedNode": "\\WIndowsImageDeployerPE\\FIleDownloader.cs",
   "PreviewInSolutionExplorer": false
 }
