@@ -34,12 +34,13 @@ namespace WIndowsImageDeployerPE
             Console.Clear();
               Console.WriteLine("--------Windows 11 Deployer-----------------------");
             Console.WriteLine(Resource1.logo);
-              Console.WriteLine("--------------------------------------------------");
+              
             //  Console.WriteLine("Created by Carson Games");
             Console.WriteLine("\nVersion : " + program.version + "\n");
+            Console.WriteLine("--------------------------------------------------");
             program.DisplaySystemInfo();
+            Console.WriteLine("--------------------------------------------------");
 
-          
 
 
 
@@ -173,13 +174,13 @@ namespace WIndowsImageDeployerPE
                 // extract information from output
                 string table = output.Split(new string[] { "DISKPART>" }, StringSplitOptions.None)[1];
                 var rows = table.Split(new string[] { "\n" }, StringSplitOptions.None);
-                for (int i = 3; i < rows.Length; i++)
-                {
-                    // if (rows[i].Contains("Disk"))
-                    //  {
-                    int index = Int32.Parse(rows[i].Split(new string[] { " " }, StringSplitOptions.None)[3]);
-                    string label = rows[i].Split(new string[] { " " }, StringSplitOptions.None)[16] + " " + rows[i].Split(new string[] { " " }, StringSplitOptions.None)[17];
-                    // long size = 0;
+                //for (int i = 3; i < rows.Length; i++)
+                //{
+                //    // if (rows[i].Contains("Disk"))
+                //    //  {
+                //    int index = Int32.Parse(rows[i].Split(new string[] { " " }, StringSplitOptions.None)[3]);
+                //    string label = rows[i].Split(new string[] { " " }, StringSplitOptions.None)[16] + " " + rows[i].Split(new string[] { " " }, StringSplitOptions.None)[17];
+                //    // long size = 0;
 
 
                     //foreach (DriveInfo drive in DriveInfo.GetDrives())
@@ -256,13 +257,20 @@ namespace WIndowsImageDeployerPE
                             if (program.Install(indexsel))
                             {
 
-                                Console.WriteLine(" (3/3) Adding BCD Records");
+                                Console.WriteLine(" (3/3) Adding BCD Boot Records");
                                 if (program.BCDRecords(drivesel))
                                 {
-                                    Console.WriteLine("Windows 11 has been deployed! ");
-                                    Console.WriteLine("Run 'exit' to reboot. ");
+                                    Console.WriteLine("Windows 11 has been deployed!\nRebooting ");
+                               
+                                process.StartInfo.FileName = "wpeutil.exe";
+                                process.StartInfo.Arguments = "reboot";
+                                process.StartInfo.UseShellExecute = false;
+                                process.StartInfo.CreateNoWindow = true;
+                                process.StartInfo.RedirectStandardInput = true;
+                                process.StartInfo.RedirectStandardOutput = true;
+                                process.Start();
 
-                                    Environment.Exit(0);
+                                Environment.Exit(0);
 
                                 }
 
@@ -277,7 +285,7 @@ namespace WIndowsImageDeployerPE
 
 
 
-                }
+                
             }
 
         }
@@ -363,7 +371,7 @@ namespace WIndowsImageDeployerPE
             Process process = new Process();
             if (isUEFI())
             {
-
+                Console.WriteLine("--Start of format-- ");
                 process.StartInfo.FileName = "diskpart.exe";
                 process.StartInfo.UseShellExecute = false;
                 process.StartInfo.CreateNoWindow = true;
@@ -371,12 +379,23 @@ namespace WIndowsImageDeployerPE
                 process.StartInfo.RedirectStandardOutput = true;
                 process.Start();
                 process.StandardInput.WriteLine("select disk " + index);
+                Console.WriteLine("  Formatting Drive " + index);
                 process.StandardInput.WriteLine("clean");
+                Console.WriteLine("  Converting to GPT");
+
                 process.StandardInput.WriteLine("convert gpt");
+                Console.WriteLine("  Creating EFI Partition" );
+
                 process.StandardInput.WriteLine("create part efi size=500");
+                Console.WriteLine("  Formatting EFI as FAT32");
+
                 process.StandardInput.WriteLine("format fs=fat32");
                 process.StandardInput.WriteLine("assign letter=s");
+                Console.WriteLine("  Creating Windows Partition");
+
                 process.StandardInput.WriteLine("create part pri");
+                Console.WriteLine("  Formatting Windows Partition");
+
                 process.StandardInput.WriteLine("format quick fs=ntfs");
                 process.StandardInput.WriteLine("assign letter=w");
 
@@ -384,6 +403,7 @@ namespace WIndowsImageDeployerPE
 
                 process.StandardInput.WriteLine("exit");
 
+                Console.WriteLine("--End of format-- ");
 
                 string output1 = process.StandardOutput.ReadToEnd();
                 process.WaitForExit();
@@ -391,6 +411,8 @@ namespace WIndowsImageDeployerPE
             }
             else
             {
+                Console.WriteLine("--Start of format-- ");
+
                 process.StartInfo.FileName = "diskpart.exe";
                 process.StartInfo.UseShellExecute = false;
                 process.StartInfo.CreateNoWindow = true;
@@ -398,20 +420,39 @@ namespace WIndowsImageDeployerPE
                 process.StartInfo.RedirectStandardOutput = true;
                 process.Start();
                 process.StandardInput.WriteLine("select disk " + index);
+                Console.WriteLine("  Formatting Drive " + index);
                 process.StandardInput.WriteLine("clean");
+               
+                Console.WriteLine("  Creating System Partition");
+
                 process.StandardInput.WriteLine("create partition primary size=100");
+                Console.WriteLine("  Formatting System as NTFS " + index);
+
                 process.StandardInput.WriteLine("format quick fs=ntfs label=System");
                 process.StandardInput.WriteLine("assign letter=S");
+                Console.WriteLine("  Creating Windows Partition");
+
                 process.StandardInput.WriteLine("create partition primary");
+                Console.WriteLine("  Removing 650 MB from Windows");
+
                 process.StandardInput.WriteLine("shrink minimum=650");
+                Console.WriteLine("  Formatting Windows as NTFS " + index);
+
                 process.StandardInput.WriteLine("format quick fs=ntfs label=Windows");
                 process.StandardInput.WriteLine("assign letter=W");
+                Console.WriteLine("  Creating Recovery Partition");
+
                 process.StandardInput.WriteLine("create partition primary");
+                Console.WriteLine("  Formatting Recovery as NTFS " + index);
+
                 process.StandardInput.WriteLine("format quick fs=ntfs label=Recovery");
                 process.StandardInput.WriteLine("assign letter=R");
+                Console.WriteLine("  Marking Recovery as Hidden " + index);
+
                 process.StandardInput.WriteLine("set id=27");
 
                 process.StandardInput.WriteLine("exit");
+                Console.WriteLine("--End of format-- ");
 
 
                 string output = process.StandardOutput.ReadToEnd();
