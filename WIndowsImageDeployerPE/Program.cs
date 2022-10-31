@@ -16,7 +16,7 @@ namespace WIndowsImageDeployerPE
         int left = Console.CursorLeft;
         int top = Console.CursorTop;
         Microsoft.VisualBasic.Devices.ComputerInfo ComputerInfo = new Microsoft.VisualBasic.Devices.ComputerInfo();
-        string version = "1.2";
+        string version = "1.5";
         [STAThread]
 
         public static void Main(string[] args)
@@ -32,9 +32,9 @@ namespace WIndowsImageDeployerPE
 
             Console.ForegroundColor = ConsoleColor.White;
             Console.Clear();
-              Console.WriteLine("--------Windows 11 Deployer-----------------------");
+            Console.WriteLine("--------Windows 11 Deployer-----------------------");
             Console.WriteLine(Resource1.logo);
-              
+
             //  Console.WriteLine("Created by Carson Games");
             Console.WriteLine("\nVersion : " + program.version + "\n");
             Console.WriteLine("--------------------------------------------------");
@@ -183,109 +183,113 @@ namespace WIndowsImageDeployerPE
                 //    // long size = 0;
 
 
-                    //foreach (DriveInfo drive in DriveInfo.GetDrives())
-                    //{
+                //foreach (DriveInfo drive in DriveInfo.GetDrives())
+                //{
 
-                    //    if (drive.IsReady && drive.VolumeLabel == label)
-                    //    {
-                    //        size = (long)(drive.TotalSize / 1000 / 1024);
-                    //    }
-                    //}
-                    Console.WriteLine(output);
-                    //    }
+                //    if (drive.IsReady && drive.VolumeLabel == label)
+                //    {
+                //        size = (long)(drive.TotalSize / 1000 / 1024);
+                //    }
+                //}
+                Console.WriteLine(output);
+                //    }
 
 
 
-                    Console.WriteLine("Select a disk number");
-                    drivesel = program.GetIndexOfDrive(Console.ReadLine());
-                    if (drivesel == -1)
+                Console.WriteLine("Select a disk number");
+                drivesel = program.GetIndexOfDrive(Console.ReadLine());
+                if (drivesel == -1)
+                {
+                    Console.WriteLine("Invalid Selection.");
+                }
+                else
+                {
+                    Console.WriteLine("Are you sure you want to continue with " + drivesel + "?");
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("ALL DATA ON THAT DRIVE WILL BE FORMATTED!!!");
+                    Console.ForegroundColor = ConsoleColor.White;
+                    string answer = Console.ReadLine();
+                    if (answer == "Y" || answer == "y")
                     {
-                        Console.WriteLine("Invalid Selection.");
+
+
                     }
                     else
                     {
-                        Console.WriteLine("Are you sure you want to continue with " + drivesel + "?");
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("ALL DATA ON THAT DRIVE WILL BE FORMATTED!!!");
-                        Console.ForegroundColor = ConsoleColor.White;
-                        string answer = Console.ReadLine();
-                        if (answer == "Y" || answer == "y")
+                        Console.WriteLine("Starting over");
+                    }
+
+
+                    Console.WriteLine("Getting Windows Editions..");
+
+                    Process process1 = new Process();
+                    process1.StartInfo.FileName = "dism.exe";
+                    process1.StartInfo.Arguments = "/Get-WimInfo /WimFile:install.wim";
+                    process1.StartInfo.UseShellExecute = false;
+                    process1.StartInfo.CreateNoWindow = true;
+                    process1.StartInfo.RedirectStandardInput = true;
+                    process1.StartInfo.RedirectStandardOutput = true;
+                    process1.Start();
+                    string output1 = process1.StandardOutput.ReadToEnd();
+
+                    process1.WaitForExit();
+
+                    Console.WriteLine(output1);
+
+                    Console.WriteLine("Select the edition of windows you would like installed.");
+                    answer = Console.ReadLine();
+
+                    int indexsel = int.Parse(answer);
+
+
+
+
+
+
+
+
+                    Console.WriteLine(" (1/4) Formatting Drive");
+                    if (program.Format(drivesel))
+                    {
+
+                        Console.WriteLine(" (2/4) Deploying Image - This may take awhile");
+
+                        if (program.Install(indexsel))
                         {
 
+                            Console.WriteLine(" (3/4) Adding BCD Boot Records");
+                            if (program.BCDRecords(drivesel))
+                            {
+                                Console.WriteLine(" (4/4) Copying Update Patch");
+                                if (program.CopyPatch())
+                                {
+                                    Console.WriteLine("Windows 11 has been deployed!\nRebooting ");
+
+                                    process.StartInfo.FileName = "wpeutil.exe";
+                                    process.StartInfo.Arguments = "reboot";
+                                    process.StartInfo.UseShellExecute = false;
+                                    process.StartInfo.CreateNoWindow = true;
+                                    process.StartInfo.RedirectStandardInput = true;
+                                    process.StartInfo.RedirectStandardOutput = true;
+                                    process.Start();
+
+                                    Environment.Exit(0);
+
+                                }
+                            }
 
                         }
                         else
                         {
-                            Console.WriteLine("Starting over");
+                            program.Error();
                         }
 
-
-                        Console.WriteLine("Getting Windows Editions..");
-
-                        Process process1 = new Process();
-                        process1.StartInfo.FileName = "dism.exe";
-                        process1.StartInfo.Arguments = "/Get-WimInfo /WimFile:install.wim";
-                        process1.StartInfo.UseShellExecute = false;
-                        process1.StartInfo.CreateNoWindow = true;
-                        process1.StartInfo.RedirectStandardInput = true;
-                        process1.StartInfo.RedirectStandardOutput = true;
-                        process1.Start();
-                        string output1 = process1.StandardOutput.ReadToEnd();
-
-                        process1.WaitForExit();
-
-                        Console.WriteLine(output1);
-
-                        Console.WriteLine("Select the edition of windows you would like installed.");
-                        answer = Console.ReadLine();
-
-                        int indexsel = int.Parse(answer);
-
-
-
-
-
-
-
-
-                        Console.WriteLine(" (1/3) Formatting Drive");
-                        if (program.Format(drivesel))
-                        {
-
-                            Console.WriteLine(" (2/3) Deploying Image - This may take awhile");
-
-                            if (program.Install(indexsel))
-                            {
-
-                                Console.WriteLine(" (3/3) Adding BCD Boot Records");
-                                if (program.BCDRecords(drivesel))
-                                {
-                                    Console.WriteLine("Windows 11 has been deployed!\nRebooting ");
-                               
-                                process.StartInfo.FileName = "wpeutil.exe";
-                                process.StartInfo.Arguments = "reboot";
-                                process.StartInfo.UseShellExecute = false;
-                                process.StartInfo.CreateNoWindow = true;
-                                process.StartInfo.RedirectStandardInput = true;
-                                process.StartInfo.RedirectStandardOutput = true;
-                                process.Start();
-
-                                Environment.Exit(0);
-
-                                }
-
-                            }
-                            else
-                            {
-                                program.Error();
-                            }
-
-                        }
                     }
+                }
 
 
 
-                
+
             }
 
         }
@@ -384,7 +388,7 @@ namespace WIndowsImageDeployerPE
                 Console.WriteLine("  Converting to GPT");
 
                 process.StandardInput.WriteLine("convert gpt");
-                Console.WriteLine("  Creating EFI Partition" );
+                Console.WriteLine("  Creating EFI Partition");
 
                 process.StandardInput.WriteLine("create part efi size=500");
                 Console.WriteLine("  Formatting EFI as FAT32");
@@ -422,7 +426,7 @@ namespace WIndowsImageDeployerPE
                 process.StandardInput.WriteLine("select disk " + index);
                 Console.WriteLine("  Formatting Drive " + index);
                 process.StandardInput.WriteLine("clean");
-               
+
                 Console.WriteLine("  Creating System Partition");
 
                 process.StandardInput.WriteLine("create partition primary size=100");
@@ -460,7 +464,7 @@ namespace WIndowsImageDeployerPE
                 return true;
             }
         }
-       
+
         public bool Install(int index)
         {
 
@@ -524,6 +528,14 @@ namespace WIndowsImageDeployerPE
                 return true;
             }
         }
+        public bool CopyPatch()
+        {
+            Directory.CreateDirectory(@"W:\Windows\Setup\Scripts");
+
+            File.Copy("SetupComplete.cmd", @"W:\Windows\Setup\Scripts\SetupComplete.cmd");
+            return true;
+
+        }
 
 
 
@@ -579,7 +591,7 @@ namespace WIndowsImageDeployerPE
             try
             {
 
-             
+
 
                 progress progress = new progress();
                 progress.ShowDialog();
@@ -588,14 +600,14 @@ namespace WIndowsImageDeployerPE
                 Console.ReadKey();
                 Application.Exit();
 
-            
+
             }
             catch (Exception ex)
             {
-               Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.Message);
             }
         }
-                   
+
 
 
 
@@ -610,7 +622,7 @@ namespace WIndowsImageDeployerPE
 
         private void Client_DownloadFileCompleted(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
         {
-        
+
         }
     }
 }
