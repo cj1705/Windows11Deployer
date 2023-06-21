@@ -76,9 +76,9 @@
             // listView1
             // 
             this.listView1.HideSelection = false;
-            this.listView1.Location = new System.Drawing.Point(12, 22);
+            this.listView1.Location = new System.Drawing.Point(45, 22);
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(304, 95);
+            this.listView1.Size = new System.Drawing.Size(236, 95);
             this.listView1.TabIndex = 5;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.List;

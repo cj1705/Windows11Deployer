@@ -25,14 +25,5 @@ C:\Users\Carson\Source\Repos\cj1705\Windows11Deployer\WIndowsImageDeployerPE\obj
 C:\Users\Carson\Source\Repos\cj1705\Windows11Deployer\WIndowsImageDeployerPE\obj\Debug\WIndowsImageDeployerPE.pdb
 C:\Users\Carson\source\repos\cj1705\Windows11Deployer\WIndowsImageDeployerPE\obj\Debug\WIndowsImageDeployerPE.Resource1.resources
 C:\Users\Carson\source\repos\cj1705\Windows11Deployer\WIndowsImageDeployerPE\obj\Debug\WIndowsImageDeployerPE.forms._403.resources
-H:\VS stuff\Projects\Windows11Deployer\WIndowsImageDeployerPE\bin\Debug\WIndowsImageDeployerPE.exe.config
-H:\VS stuff\Projects\Windows11Deployer\WIndowsImageDeployerPE\bin\Debug\WIndowsImageDeployerPE.exe
-H:\VS stuff\Projects\Windows11Deployer\WIndowsImageDeployerPE\bin\Debug\WIndowsImageDeployerPE.pdb
-H:\VS stuff\Projects\Windows11Deployer\WIndowsImageDeployerPE\obj\Debug\WIndowsImageDeployerPE.csproj.AssemblyReference.cache
-H:\VS stuff\Projects\Windows11Deployer\WIndowsImageDeployerPE\obj\Debug\WIndowsImageDeployerPE.forms._403.resources
-H:\VS stuff\Projects\Windows11Deployer\WIndowsImageDeployerPE\obj\Debug\WIndowsImageDeployerPE.progress.resources
-H:\VS stuff\Projects\Windows11Deployer\WIndowsImageDeployerPE\obj\Debug\WIndowsImageDeployerPE.Resource1.resources
-H:\VS stuff\Projects\Windows11Deployer\WIndowsImageDeployerPE\obj\Debug\WIndowsImageDeployerPE.csproj.GenerateResource.cache
-H:\VS stuff\Projects\Windows11Deployer\WIndowsImageDeployerPE\obj\Debug\WIndowsImageDeployerPE.csproj.CoreCompileInputs.cache
-H:\VS stuff\Projects\Windows11Deployer\WIndowsImageDeployerPE\obj\Debug\WIndowsImageDeployerPE.exe
-H:\VS stuff\Projects\Windows11Deployer\WIndowsImageDeployerPE\obj\Debug\WIndowsImageDeployerPE.pdb
+H:\VS stuff\Projects\WIndowsImageDeployerPE\WIndowsImageDeployerPE\obj\Debug\WIndowsImageDeployerPE.forms._403.resources
+H:\VS stuff\Projects\WIndowsImageDeployerPE\WIndowsImageDeployerPE\obj\Debug\WIndowsImageDeployerPE.Resource1.resources

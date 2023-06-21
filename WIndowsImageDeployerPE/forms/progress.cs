@@ -82,7 +82,7 @@ namespace WIndowsImageDeployerPE
             //}
             try
             {
-                using (Stream stream = wc.OpenRead("https://projects.carsongames.com/windows11deployer/list.txt"))
+                using (Stream stream = wc.OpenRead("https://cloud.carsonmedia.net/index.php/s/HXfwHMx52K5KR6j/download"))
                 {
                     using (StreamReader reader = new StreamReader(stream))
                     {
